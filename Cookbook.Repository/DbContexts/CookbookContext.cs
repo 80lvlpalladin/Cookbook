@@ -11,8 +11,8 @@ namespace Cookbook.Repository.DbContexts
         /// <summary>Creates a db file if absent</summary>
         public CookbookContext() => Database.EnsureCreated();
 
-        /// <summary>Recipes table</summary>
-        internal DbSet<Recipe> Recipes { get; set; }
+        /// <summary>Table that reflects recipe tree structure</summary>
+        internal DbSet<RecipeNode> RecipesTree { get; set; }
 
         /// <summary>Recipes history table</summary>
         internal DbSet<RecipeLogEntry> RecipesHistory { get; set; }
@@ -25,7 +25,7 @@ namespace Cookbook.Repository.DbContexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Recipe>().HasKey(recipe => new { recipe.RecipeID, recipe.AncestryPath });
+            builder.Entity<RecipeNode>().HasKey(recipe => new { recipe.RecipeID, recipe.AncestryPath });
             builder.Entity<RecipeLogEntry>().HasKey(entry =>entry.VersionID);
             SeedInitialData(builder);
         }
@@ -36,8 +36,8 @@ namespace Cookbook.Repository.DbContexts
 
         private void SeedInitialData(ModelBuilder builder)
         {
-            builder.Entity<Recipe>()
-                .HasData(Enumerable.Range(1, 10).Select(i => new Recipe() { RecipeID = i, AncestryPath = $"{i}/" }));
+            builder.Entity<RecipeNode>()
+                .HasData(Enumerable.Range(1, 10).Select(i => new RecipeNode() { RecipeID = i, AncestryPath = $"{i}/" }));
 
             builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry[]
             {               

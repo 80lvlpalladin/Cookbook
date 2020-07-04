@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Cookbook.Repository.DbContexts;
 
 namespace Cookbook.API
 {
@@ -8,7 +7,6 @@ namespace Cookbook.API
     {
         public static void Main(string[] args)
         {
-            var x = new CookbookContext();
             CreateHostBuilder(args).Build().Run();
         }
 

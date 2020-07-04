@@ -1,7 +1,7 @@
 ﻿namespace Cookbook.Repository.Entities
 {
-    /// <summary>Entity class for the recipe</summary>
-    public class Recipe
+    /// <summary>Entity class reflecting recipe position in recipes tree</summary>
+    public class RecipeNode
     {
         /// <summary>Unique identifier of the recipe</summary>
         public int RecipeID { get; set; }
