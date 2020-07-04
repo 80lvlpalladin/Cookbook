@@ -1,0 +1,9 @@
+﻿<Application x:Class="Cookbook.Client.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="clr-namespace:Cookbook.Client.ViewModels"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <viewModels:MainWindowViewModel x:Key="MainWindowViewModel"/>
+    </Application.Resources>
+</Application>

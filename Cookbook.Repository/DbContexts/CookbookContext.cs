@@ -39,6 +39,9 @@ namespace Cookbook.Repository.DbContexts
             builder.Entity<RecipeNode>()
                 .HasData(Enumerable.Range(1, 10).Select(i => new RecipeNode() { RecipeID = i, AncestryPath = $"{i}/" }));
 
+            builder.Entity<RecipeNode>().HasData(Enumerable.Range(11, 3)
+                .Select(i => new RecipeNode { RecipeID = i, AncestryPath = $"3/{i}" }));
+
             builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry[]
             {               
                 new RecipeLogEntry(){ VersionID = 1, RecipeID = 1, LastUpdated = DateTime.Now, Title = "Pasta Carbonara", Description = "Description for Pasta Carbonara"},
@@ -51,6 +54,10 @@ namespace Cookbook.Repository.DbContexts
                 new RecipeLogEntry(){ VersionID = 8, RecipeID = 8, LastUpdated = DateTime.Now, Title = "Classic Taco", Description = "Description for Classic Taco"},
                 new RecipeLogEntry(){ VersionID = 9, RecipeID = 9, LastUpdated = DateTime.Now, Title = "Salmon Pate", Description = "Description for Salmon Pate"},
                 new RecipeLogEntry(){ VersionID = 10,RecipeID = 10,LastUpdated = DateTime.Now, Title = "Chicken Kyiv", Description = "Description for Chicken Kyiv"},
+                new RecipeLogEntry(){ VersionID = 11,RecipeID = 11,LastUpdated = DateTime.Now, Title = "Baked trout with apples", Description = "Description for Baked trout with apples"},
+                new RecipeLogEntry(){ VersionID = 12,RecipeID = 12,LastUpdated = DateTime.Now, Title = "Baked trout with eggs", Description = "Description for Baked trout with eggs"},
+                new RecipeLogEntry(){ VersionID = 13,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "Description for Baked trout with oranges"},
+
             });
         }
        
