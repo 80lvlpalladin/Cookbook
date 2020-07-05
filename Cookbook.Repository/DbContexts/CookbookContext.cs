@@ -57,7 +57,7 @@ namespace Cookbook.Repository.DbContexts
                 new RecipeLogEntry(){ VersionID = 11,RecipeID = 11,LastUpdated = DateTime.Now, Title = "Baked trout with apples", Description = "Description for Baked trout with apples"},
                 new RecipeLogEntry(){ VersionID = 12,RecipeID = 12,LastUpdated = DateTime.Now, Title = "Baked trout with eggs", Description = "Description for Baked trout with eggs"},
                 new RecipeLogEntry(){ VersionID = 13,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "Description for Baked trout with oranges"},
-
+                new RecipeLogEntry(){ VersionID = 14,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "New Description for Baked trout with oranges"},
             });
         }
        

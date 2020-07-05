@@ -10,11 +10,14 @@ namespace Cookbook.API.Controllers
     [ApiController]
     public class RecipesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<RecipeDto>> GetRecipes()
+        /// <summary>Returns recipes for given parent ID</summary>
+        /// <param name="parentId">Id of the parent recipe we want to fetch children for</param>
+        /// <returns>List of child recipes for given parent Id. Empty list, if recipe doesnt have any children</returns>
+        [HttpGet("{parentId?}")]
+        public ActionResult<IEnumerable<RecipeDto>> GetRecipes(int parentId = 0)
         {
             using var reader = new CookbookReader();
-            return new JsonResult(reader.GetRecipes().ToRecipeDto());
+            return new JsonResult(reader.GetRecipes(parentId).ToRecipeDto());
         }
     }
 }

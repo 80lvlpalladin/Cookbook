@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cookbook.Client.Models
 {
@@ -23,6 +24,6 @@ namespace Cookbook.Client.Models
         /// <summary>Recipe description</summary>
         public string Description { get; set; }
 
-        //public Recipe Child { get; set; }
+        public IEnumerable<Recipe> Children { get; set; }
     }
 }

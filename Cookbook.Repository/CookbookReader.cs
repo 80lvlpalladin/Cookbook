@@ -1,5 +1,6 @@
 ﻿using Cookbook.Repository.DbContexts;
 using Cookbook.Repository.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,25 +16,37 @@ namespace Cookbook.Repository
         ///<inheritdoc/>
         public void Dispose() => _context.Dispose();
 
-        /// <summary>Get current versions of all recipes</summary>
+        /// <summary>Get current versions of recipes with given parentID</summary>
+        /// <param name="parentId">0 if you want to get all root recipes</param>
         /// <returns>Dictionary of RecipeNode and RecipeLogEntry objects</returns>
-        public Dictionary<RecipeNode, RecipeLogEntry> GetRecipes()
+        /// TODO: TEST THIS
+        public Dictionary<RecipeNode, RecipeLogEntry> GetRecipes(int parentId = 0)
         {
-            IEnumerable<RecipeNode> recipeNodes = _context.RecipesTree.OrderBy(node => node.RecipeID);
-            //IEnumerable<RecipeLogEntry> recipeLogs = _context.RecipesHistory.FromSqlRaw(
-            //    "SELECT * FROM RecipesHistory as x " +
-            //    "WHERE x.LastUpdated = (" +
-            //        "SELECT MAX(LastUpdated) FROM RecipesHistory as y " +
-            //        "WHERE y.RecipeID = x.RecipeID)");
+            string parentAncestryPath = 
+                _context.RecipesTree.FirstOrDefault(node => node.RecipeID == parentId)?.AncestryPath;
 
-            //this query gets the latest version of each recipe based on LastUpdated column
-            IEnumerable<RecipeLogEntry> recipeLogs = _context.RecipesHistory
-                .Where(entry => entry.LastUpdated == _context.RecipesHistory
-                .Where(i => i.RecipeID == entry.RecipeID).Max(i => i.LastUpdated)).OrderBy(entry => entry.RecipeID);
+            IEnumerable<RecipeNode> recipeNodes;
+
+            if (parentAncestryPath is null)
+                recipeNodes = _context.RecipesTree.FromSqlRaw(
+                    "SELECT * FROM RecipesTree " +
+                    "WHERE AncestryPath LIKE '%/'" +
+                    "ORDER BY RecipeID");
+            else            
+                recipeNodes = _context.RecipesTree.FromSqlRaw(
+                    $"SELECT * FROM RecipesTree " +
+                    $"WHERE AncestryPath LIKE '{parentAncestryPath}%' " +
+                    $"AND AncestryPath NOT LIKE '{parentAncestryPath}%/%' " +
+                    $"AND AncestryPath <> '{parentAncestryPath}' " +
+                    $"ORDER BY RecipeID");
+
+            //this query fetches last log entries for abovementioned recipe nodes
+            IEnumerable<RecipeLogEntry> recipeLogs = recipeNodes.Select(node =>
+                _context.RecipesHistory.Where(entry => entry.RecipeID == node.RecipeID).OrderByDescending(entry => entry.LastUpdated).First());
 
             if (recipeLogs.Count() != recipeNodes.Count()) 
                 throw new ArgumentOutOfRangeException("RecipeLogs and RecipeNodes lists must be equal");
-
+            
             return recipeNodes
                 .Zip(recipeLogs, (node, entry) => new { node, entry })
                 .ToDictionary(result => result.node, result => result.entry);
