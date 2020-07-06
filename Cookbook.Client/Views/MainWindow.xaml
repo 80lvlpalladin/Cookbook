@@ -3,19 +3,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Cookbook.Client"
+        xmlns:self="clr-namespace:Cookbook.Client.ViewModels"
+        xmlns:controls="clr-namespace:Cookbook.Client.Views.UserControls"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Title="Cookbook" Height="800" Width="700"
         DataContext="{StaticResource MainWindowViewModel}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
-        <TreeView Grid.Column="0" ItemsSource="{Binding Recipes}" TreeViewItem.Expanded="TreeView_Expanded" DisplayMemberPath="Title"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Red"/>
+        <TreeView SelectedValuePath="{Binding SelectedRecipe}" x:Name="RecipesTreeView" Margin="5 5 0 5" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Recipes}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type self:RecipeViewModel}" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Title}" FontSize="20">                     
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadChildrenCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBlock>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+        <controls:LoadingControl Grid.Row="0" 
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}, 
+            ConverterParameter=HiddenIfFalse}" Grid.Column="0" MaxHeight="200" MaxWidth="200"/>
+
+        <GridSplitter Grid.Row="0" Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Transparent" />
+
+        <Border Grid.Column="2" Grid.Row="0" Margin="0 5 5 5" 
+                BorderBrush="{Binding ElementName=RecipesTreeView, Path=BorderBrush}" 
+                BorderThickness="{Binding ElementName=RecipesTreeView, Path=BorderThickness}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding ElementName=RecipesTreeView, Path=SelectedItem.Description}"/>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Margin="5 0 5 5" Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <Button ToolTip="Create a recipe based on selected one / Create a new recipe" 
+                    Command="{Binding CreateRecipeCommand}" Content="Create a recipe" x:Name="CreateRecipeButton"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"/>
+        </StackPanel>
     </Grid>
 </Window>

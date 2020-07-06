@@ -40,7 +40,9 @@ namespace Cookbook.Repository.DbContexts
                 .HasData(Enumerable.Range(1, 10).Select(i => new RecipeNode() { RecipeID = i, AncestryPath = $"{i}/" }));
 
             builder.Entity<RecipeNode>().HasData(Enumerable.Range(11, 3)
-                .Select(i => new RecipeNode { RecipeID = i, AncestryPath = $"3/{i}" }));
+                .Select(i => new RecipeNode { RecipeID = i, AncestryPath = $"3/{i}/" }));
+
+            builder.Entity<RecipeNode>().HasData(new RecipeNode() { RecipeID = 14, AncestryPath = "3/11/14/" });
 
             builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry[]
             {               
@@ -58,6 +60,8 @@ namespace Cookbook.Repository.DbContexts
                 new RecipeLogEntry(){ VersionID = 12,RecipeID = 12,LastUpdated = DateTime.Now, Title = "Baked trout with eggs", Description = "Description for Baked trout with eggs"},
                 new RecipeLogEntry(){ VersionID = 13,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "Description for Baked trout with oranges"},
                 new RecipeLogEntry(){ VersionID = 14,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "New Description for Baked trout with oranges"},
+                new RecipeLogEntry(){ VersionID = 15,RecipeID = 14,LastUpdated = DateTime.Now, Title = "Baked trout with apples and cheese", Description = " Description for Baked trout with apples and cheese"},
+
             });
         }
        

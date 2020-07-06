@@ -16,9 +16,9 @@ namespace Cookbook.Repository
         ///<inheritdoc/>
         public void Dispose() => _context.Dispose();
 
-        /// <summary>Get current versions of recipes with given parentID</summary>
+        /// <summary>Get current versions of children of recipe with given ID</summary>
         /// <param name="parentId">0 if you want to get all root recipes</param>
-        /// <returns>Dictionary of RecipeNode and RecipeLogEntry objects</returns>
+        /// <returns>Dictionary of RecipeNode and RecipeLogEntry objects, null if no recipe with such id exists</returns>
         /// TODO: TEST THIS
         public Dictionary<RecipeNode, RecipeLogEntry> GetRecipes(int parentId = 0)
         {
@@ -27,16 +27,20 @@ namespace Cookbook.Repository
 
             IEnumerable<RecipeNode> recipeNodes;
 
-            if (parentAncestryPath is null)
+            //this query fetches only the immediate children of a recipe
+            if (parentAncestryPath is null && parentId == 0)
                 recipeNodes = _context.RecipesTree.FromSqlRaw(
                     "SELECT * FROM RecipesTree " +
                     "WHERE AncestryPath LIKE '%/'" +
+                    "AND AncestryPath NOT LIKE '%/%/'" +
                     "ORDER BY RecipeID");
-            else            
+            else if (parentAncestryPath is null && parentId != 0)
+                return null;
+            else
                 recipeNodes = _context.RecipesTree.FromSqlRaw(
                     $"SELECT * FROM RecipesTree " +
                     $"WHERE AncestryPath LIKE '{parentAncestryPath}%' " +
-                    $"AND AncestryPath NOT LIKE '{parentAncestryPath}%/%' " +
+                    $"AND AncestryPath NOT LIKE '{parentAncestryPath}%/%/' " +
                     $"AND AncestryPath <> '{parentAncestryPath}' " +
                     $"ORDER BY RecipeID");
 
@@ -44,9 +48,6 @@ namespace Cookbook.Repository
             IEnumerable<RecipeLogEntry> recipeLogs = recipeNodes.Select(node =>
                 _context.RecipesHistory.Where(entry => entry.RecipeID == node.RecipeID).OrderByDescending(entry => entry.LastUpdated).First());
 
-            if (recipeLogs.Count() != recipeNodes.Count()) 
-                throw new ArgumentOutOfRangeException("RecipeLogs and RecipeNodes lists must be equal");
-            
             return recipeNodes
                 .Zip(recipeLogs, (node, entry) => new { node, entry })
                 .ToDictionary(result => result.node, result => result.entry);

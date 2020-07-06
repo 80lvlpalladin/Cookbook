@@ -17,7 +17,12 @@ namespace Cookbook.API.Controllers
         public ActionResult<IEnumerable<RecipeDto>> GetRecipes(int parentId = 0)
         {
             using var reader = new CookbookReader();
-            return new JsonResult(reader.GetRecipes(parentId).ToRecipeDto());
+            var result = reader.GetRecipes(parentId)?.ToRecipeDto();
+
+            if (result is null)
+                return new NotFoundResult();
+            else
+                return new JsonResult(result);
         }
     }
 }
