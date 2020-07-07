@@ -6,7 +6,9 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <viewModels:MainWindowViewModel x:Key="MainWindowViewModel"/>
+        <viewModels:RecipeEditorControlViewModel x:Key="RecipeEditorDialogViewModel"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:NullConverter x:Key="NullConverter"/>
     </Application.Resources>
 </Application>

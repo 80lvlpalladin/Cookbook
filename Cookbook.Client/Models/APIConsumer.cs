@@ -1,8 +1,11 @@
-﻿using Cookbook.Client.Utils;
+﻿using Cookbook.Client.Models.DTOs;
+using Cookbook.Client.Utils;
 using Cookbook.Client.ViewModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Cookbook.Client.Models
@@ -14,6 +17,22 @@ namespace Cookbook.Client.Models
         {
             BaseAddress = GlobalStrings.APIHostAddress
         };
+
+        public static async Task SendRecipeAsync(string title, string description, string ancestryPath = null)
+        {
+            var content = new RecipeDto()
+            {
+                Title = title,
+                Description = description,
+                ParentAncestryPath = ancestryPath
+            };
+
+            var result = await _client.PostAsync("api/recipes", 
+                new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json"));
+
+            if (!result.IsSuccessStatusCode)
+                throw new Exception(result.ReasonPhrase);
+        }
 
         public static async Task<IEnumerable<RecipeViewModel>> GetRecipesAsync(int parentId = 0)
         {

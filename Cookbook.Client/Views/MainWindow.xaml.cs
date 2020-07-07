@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Cookbook.Client
 {
@@ -10,6 +11,6 @@ namespace Cookbook.Client
         public MainWindow()
         {
             InitializeComponent();
-        }
+        }       
     }
 }

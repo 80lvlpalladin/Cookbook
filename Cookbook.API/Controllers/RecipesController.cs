@@ -24,5 +24,13 @@ namespace Cookbook.API.Controllers
             else
                 return new JsonResult(result);
         }
+
+        [HttpPost]
+        public IActionResult AddRecipe(AddRecipeDto recipe)
+        {
+            using var writer = new CookbookWriter();
+            writer.AddRecipe(recipe.Title, recipe.Description, recipe.ParentAncestryPath);
+            return new OkResult();
+        }
     }
 }

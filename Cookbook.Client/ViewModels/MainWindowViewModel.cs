@@ -1,18 +1,15 @@
 ﻿using Cookbook.Client.Models;
 using Cookbook.Client.Utils;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Cookbook.Client.ViewModels
 {
     /// <summary>
     /// TODO: summary
     /// </summary>
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : PropertyChangedPropagator
     {
         private IEnumerable<RecipeViewModel> recipes;
         private bool isLoading;
@@ -27,28 +24,9 @@ namespace Cookbook.Client.ViewModels
             IsLoading = false;
         }
 
-        private async Task<bool> CreateRecipeAsync()
-        {
-            return true;
-        }
+        public RecipeEditorControlViewModel RecipeEditor { get; } = new RecipeEditorControlViewModel();
 
-        public MainWindowViewModel()
-        {
-            LoadRecipesAsync();
-            CreateRecipeCommand = new AsyncCommand(CreateRecipeAsync);
-        }
-
-        public ICommand CreateRecipeCommand { get; set; }
-
-        public RecipeViewModel SelectedRecipe
-        {
-            get => selectedRecipe;
-            set
-            {
-                selectedRecipe = value;
-                OnPropertyChanged();
-            }
-        }
+        public MainWindowViewModel() => LoadRecipesAsync();
 
         public IEnumerable<RecipeViewModel> Recipes
         {
@@ -73,11 +51,6 @@ namespace Cookbook.Client.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string property = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
+        
     }
 }

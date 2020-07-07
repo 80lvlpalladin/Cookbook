@@ -1,28 +1,27 @@
 ﻿using Cookbook.Client.Models;
 using Cookbook.Client.Utils;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Cookbook.Client.ViewModels
 {
-    /// <summary>Client-side recipe class</summary>
-    public class RecipeViewModel : INotifyPropertyChanged
+    /// <summary>View model class for recipe</summary>
+    public class RecipeViewModel : PropertyChangedPropagator
     {
         private IEnumerable<RecipeViewModel> children;
 
-        private async Task LoadChildren()
+        private async Task LoadChildrenAsync()
         {
             Children = await APIConsumer.GetRecipesAsync(RecipeID);
         }
 
         public RecipeViewModel()
         {
-            LoadChildrenCommand = new AsyncCommand(LoadChildren);
+            LoadChildrenCommand = new RelayCommand(() => LoadChildrenAsync());
         }
 
         /// <summary>Unique identifier of the recipe</summary>
@@ -53,14 +52,6 @@ namespace Cookbook.Client.ViewModels
                 children = value.OrderBy(recipe => recipe.Title);
                 OnPropertyChanged();
             }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string property = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }
