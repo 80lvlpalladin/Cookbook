@@ -7,12 +7,12 @@
              mc:Ignorable="d">
     <StackPanel Margin="5">
         <TextBlock>Title: </TextBlock>
-        <TextBox></TextBox>
+        <TextBox Text="{Binding Title}" TextWrapping="Wrap"></TextBox>
         <TextBlock>Description:</TextBlock>
-        <TextBox Height="100"></TextBox>
+        <TextBox Text="{Binding Description}" TextWrapping="Wrap" Height="100"></TextBox>
         <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
-            <Button>Submit</Button>
-            <Button Margin="5 0 0 0">Cancel</Button>
+            <Button Command="{Binding SendRecipeCommand}">Submit</Button>
+            <Button Command="{Binding CloseEditorCommand}" Margin="5 0 0 0">Cancel</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

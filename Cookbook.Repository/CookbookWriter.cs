@@ -15,19 +15,15 @@ namespace Cookbook.Repository
        
         private readonly CookbookContext _context;
 
-        public bool AddRecipe(string title, string description, string parentAncestryPath = null)
+        private bool AddNewLogEntry(string title, string description, int recipeId, DateTime? created = null)
         {
-            var newId = _context.RecipesTree.Max(node => node.RecipeID) + 1;
-            var newPath = parentAncestryPath + newId + '/';
-            _context.RecipesTree.Add(new RecipeNode() { RecipeID = newId, AncestryPath = newPath });
-
-            var newVersionId = _context.RecipesHistory.Max(entry => entry.VersionID) + 1;
+            var newVersionId = _context.RecipesHistory.Max(entry => (int?)entry.VersionID) ?? 0 + 1;
             _context.RecipesHistory.Add(
                 new RecipeLogEntry()
                 {
                     VersionID = newVersionId,
-                    RecipeID = newId,
-                    LastUpdated = DateTime.Now,
+                    RecipeID = recipeId,
+                    LastUpdated = created ?? DateTime.Now,
                     Description = description,
                     Title = title
                 });
@@ -35,5 +31,23 @@ namespace Cookbook.Repository
             return _context.SaveChanges() > 0;
         }
 
+        public bool AddRecipe(string title, string description, string parentAncestryPath = null)
+        {
+            var newId = _context.RecipesTree.Max(node => (int?)node.RecipeID) ?? 0 + 1;
+            var newPath = parentAncestryPath + newId + '/';
+            var created = DateTime.Now;
+            _context.RecipesTree.Add(
+                new RecipeNode() { RecipeID = newId, AncestryPath = newPath, Created = created});
+
+            return AddNewLogEntry(title, description, newId, created);
+        }
+
+        public bool UpdateRecipe(string title, string description, int recipeId) 
+        {
+            if (_context.RecipesTree.FirstOrDefault(node => node.RecipeID == recipeId) is null)
+                throw new InvalidOperationException($"Recipe with id '{recipeId}' does not exist");
+
+            return AddNewLogEntry(title, description, recipeId);
+        }
     }
 }

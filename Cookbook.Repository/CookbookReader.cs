@@ -46,7 +46,8 @@ namespace Cookbook.Repository
 
             //this query fetches last log entries for abovementioned recipe nodes
             IEnumerable<RecipeLogEntry> recipeLogs = recipeNodes.Select(node =>
-                _context.RecipesHistory.Where(entry => entry.RecipeID == node.RecipeID).OrderByDescending(entry => entry.LastUpdated).First());
+                _context.RecipesHistory.Where(entry => entry.RecipeID == node.RecipeID)
+                .OrderByDescending(entry => entry.LastUpdated).First());
 
             return recipeNodes
                 .Zip(recipeLogs, (node, entry) => new { node, entry })

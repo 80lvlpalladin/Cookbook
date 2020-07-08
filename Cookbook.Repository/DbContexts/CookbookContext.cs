@@ -9,7 +9,7 @@ namespace Cookbook.Repository.DbContexts
     public class CookbookContext : DbContext
     {
         /// <summary>Creates a db file if absent</summary>
-        public CookbookContext() => Database.EnsureCreated();
+        public CookbookContext() => Database.EnsureCreated();//https://github.com/dotnet/efcore/issues/21215
 
         /// <summary>Table that reflects recipe tree structure</summary>
         internal DbSet<RecipeNode> RecipesTree { get; set; }
@@ -36,33 +36,35 @@ namespace Cookbook.Repository.DbContexts
 
         private void SeedInitialData(ModelBuilder builder)
         {
-            builder.Entity<RecipeNode>()
-                .HasData(Enumerable.Range(1, 10).Select(i => new RecipeNode() { RecipeID = i, AncestryPath = $"{i}/" }));
-
-            builder.Entity<RecipeNode>().HasData(Enumerable.Range(11, 3)
-                .Select(i => new RecipeNode { RecipeID = i, AncestryPath = $"3/{i}/" }));
-
-            builder.Entity<RecipeNode>().HasData(new RecipeNode() { RecipeID = 14, AncestryPath = "3/11/14/" });
-
-            builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry[]
-            {               
-                new RecipeLogEntry(){ VersionID = 1, RecipeID = 1, LastUpdated = DateTime.Now, Title = "Pasta Carbonara", Description = "Description for Pasta Carbonara"},
-                new RecipeLogEntry(){ VersionID = 2, RecipeID = 2, LastUpdated = DateTime.Now, Title = "Mac & Cheese", Description = "Description for Mac & Cheese"},
-                new RecipeLogEntry(){ VersionID = 3, RecipeID = 3, LastUpdated = DateTime.Now, Title = "Baked Trout", Description = "Description for Baked Trout"},
-                new RecipeLogEntry(){ VersionID = 4, RecipeID = 4, LastUpdated = DateTime.Now, Title = "British Fries", Description = "Description for British Fries"},
-                new RecipeLogEntry(){ VersionID = 5, RecipeID = 5, LastUpdated = DateTime.Now, Title = "Mashed Potatoes", Description = "Description for Mashed Potatoes"},
-                new RecipeLogEntry(){ VersionID = 6, RecipeID = 6, LastUpdated = DateTime.Now, Title = "New York Pizza", Description = "Description for New York Pizza"},
-                new RecipeLogEntry(){ VersionID = 7, RecipeID = 7, LastUpdated = DateTime.Now, Title = "Tortellini", Description = "Description for Tortellini"},
-                new RecipeLogEntry(){ VersionID = 8, RecipeID = 8, LastUpdated = DateTime.Now, Title = "Classic Taco", Description = "Description for Classic Taco"},
-                new RecipeLogEntry(){ VersionID = 9, RecipeID = 9, LastUpdated = DateTime.Now, Title = "Salmon Pate", Description = "Description for Salmon Pate"},
-                new RecipeLogEntry(){ VersionID = 10,RecipeID = 10,LastUpdated = DateTime.Now, Title = "Chicken Kyiv", Description = "Description for Chicken Kyiv"},
-                new RecipeLogEntry(){ VersionID = 11,RecipeID = 11,LastUpdated = DateTime.Now, Title = "Baked trout with apples", Description = "Description for Baked trout with apples"},
-                new RecipeLogEntry(){ VersionID = 12,RecipeID = 12,LastUpdated = DateTime.Now, Title = "Baked trout with eggs", Description = "Description for Baked trout with eggs"},
-                new RecipeLogEntry(){ VersionID = 13,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "Description for Baked trout with oranges"},
-                new RecipeLogEntry(){ VersionID = 14,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "New Description for Baked trout with oranges"},
-                new RecipeLogEntry(){ VersionID = 15,RecipeID = 14,LastUpdated = DateTime.Now, Title = "Baked trout with apples and cheese", Description = " Description for Baked trout with apples and cheese"},
-
-            });
+            //builder.Entity<RecipeNode>()
+            //    .HasData(Enumerable.Range(1, 10).Select(i => 
+            //    new RecipeNode() { RecipeID = i, AncestryPath = $"{i}/", Created = DateTime.Now + TimeSpan.FromSeconds(i) }));
+            //
+            //builder.Entity<RecipeNode>().HasData(Enumerable.Range(11, 3)
+            //    .Select(i => new RecipeNode { RecipeID = i, AncestryPath = $"3/{i}/", Created = DateTime.Now + TimeSpan.FromSeconds(i) }));
+            //
+            //builder.Entity<RecipeNode>().HasData(
+            //    new RecipeNode() { RecipeID = 14, AncestryPath = "3/11/14/", Created = DateTime.Now + TimeSpan.FromSeconds(14)});
+            //
+            //builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry[]
+            //{               
+            //    new RecipeLogEntry(){ VersionID = 1, RecipeID = 1, LastUpdated = DateTime.Now, Title = "Pasta Carbonara", Description = "Description for Pasta Carbonara"},
+            //    new RecipeLogEntry(){ VersionID = 2, RecipeID = 2, LastUpdated = DateTime.Now, Title = "Mac & Cheese", Description = "Description for Mac & Cheese"},
+            //    new RecipeLogEntry(){ VersionID = 3, RecipeID = 3, LastUpdated = DateTime.Now, Title = "Baked Trout", Description = "Description for Baked Trout"},
+            //    new RecipeLogEntry(){ VersionID = 4, RecipeID = 4, LastUpdated = DateTime.Now, Title = "British Fries", Description = "Description for British Fries"},
+            //    new RecipeLogEntry(){ VersionID = 5, RecipeID = 5, LastUpdated = DateTime.Now, Title = "Mashed Potatoes", Description = "Description for Mashed Potatoes"},
+            //    new RecipeLogEntry(){ VersionID = 6, RecipeID = 6, LastUpdated = DateTime.Now, Title = "New York Pizza", Description = "Description for New York Pizza"},
+            //    new RecipeLogEntry(){ VersionID = 7, RecipeID = 7, LastUpdated = DateTime.Now, Title = "Tortellini", Description = "Description for Tortellini"},
+            //    new RecipeLogEntry(){ VersionID = 8, RecipeID = 8, LastUpdated = DateTime.Now, Title = "Classic Taco", Description = "Description for Classic Taco"},
+            //    new RecipeLogEntry(){ VersionID = 9, RecipeID = 9, LastUpdated = DateTime.Now, Title = "Salmon Pate", Description = "Description for Salmon Pate"},
+            //    new RecipeLogEntry(){ VersionID = 10,RecipeID = 10,LastUpdated = DateTime.Now, Title = "Chicken Kyiv", Description = "Description for Chicken Kyiv"},
+            //    new RecipeLogEntry(){ VersionID = 11,RecipeID = 11,LastUpdated = DateTime.Now, Title = "Baked trout with apples", Description = "Description for Baked trout with apples"},
+            //    new RecipeLogEntry(){ VersionID = 12,RecipeID = 12,LastUpdated = DateTime.Now, Title = "Baked trout with eggs", Description = "Description for Baked trout with eggs"},
+            //    new RecipeLogEntry(){ VersionID = 13,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "Description for Baked trout with oranges"},
+            //    new RecipeLogEntry(){ VersionID = 14,RecipeID = 13,LastUpdated = DateTime.Now, Title = "Baked trout with oranges", Description = "New Description for Baked trout with oranges"},
+            //    new RecipeLogEntry(){ VersionID = 15,RecipeID = 14,LastUpdated = DateTime.Now, Title = "Baked trout with apples and cheese", Description = " Description for Baked trout with apples and cheese"},
+            //
+            //});
         }
        
     }

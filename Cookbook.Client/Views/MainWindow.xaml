@@ -7,13 +7,13 @@
         xmlns:controls="clr-namespace:Cookbook.Client.Views.UserControls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
-        Title="Cookbook" Height="800" Width="700"
+        Title="Cookbook" Height="800" Width="900"
         DataContext="{StaticResource MainWindowViewModel}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -21,7 +21,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TreeView x:Name="RecipesTreeView" Margin="5 5 0 5" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Recipes}">
+        <TreeView IsEnabled="{Binding RecipeEditor.EditorShown, Converter={StaticResource BoolNegationConverter}}"
+            x:Name="RecipesTreeView" Margin="5 5 0 5" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Recipes}">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type self:RecipeViewModel}" ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Title}" FontSize="20">                     
@@ -44,28 +45,53 @@
         <Border Grid.Column="2" Grid.Row="0" Margin="0 5 5 5" 
                 BorderBrush="{Binding ElementName=RecipesTreeView, Path=BorderBrush}" 
                 BorderThickness="{Binding ElementName=RecipesTreeView, Path=BorderThickness}">
-            <StackPanel>
-                <TextBlock TextWrapping="Wrap" Grid.Row="0" Text="{Binding ElementName=RecipesTreeView, Path=SelectedItem.Description}"></TextBlock>
-                <controls:RecipeEditorControl Visibility="{Binding EditorShown,
+            <DockPanel>
+                <DockPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=RecipeEditorControl, Path=Visibility}"
+                                             Value="Visible">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Resources>
+                <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Grid.Row="0" 
+                           Text="{Binding ElementName=RecipesTreeView, Path=SelectedItem.Description}"/>
+                <controls:RecipeEditorControl DockPanel.Dock="Top" x:Name="RecipeEditorControl" Visibility="{Binding EditorShown,
                     Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=CollapsedIfFalse}"
-                    DataContext="{Binding DataContext.RecipeEditor}"/>
-            </StackPanel>
+                    DataContext="{Binding RecipeEditor}"/>
+                <TextBlock DockPanel.Dock="Bottom" Text="{Binding ElementName=RecipesTreeView, Path=SelectedItem.Created}"/>
+            </DockPanel>
         </Border>
 
 
 
         <StackPanel Margin="5 0 5 5" Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
-            <Button x:Name="Create" ToolTip="Create a new recipe" Content="Create recipe"
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=RecipeEditorControl, Path=Visibility}" Value="Visible">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <Button Command="{Binding ShowRecipeCreatorCommand}"
+                    x:Name="Create" ToolTip="Create a new recipe" Content="Create recipe"
                     IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"/>
-            <Button x:Name="Fork" Content="Fork recipe" Margin="5 0 0 0"
+            <Button Command="{Binding ShowRecipeCreatorCommand}" 
+                    CommandParameter="{Binding ElementName=RecipesTreeView, Path=SelectedItem}"
+                    x:Name="Fork" Content="Fork recipe" Margin="5 0 0 0"
                     IsEnabled="{Binding ElementName=RecipesTreeView, Path=SelectedItem, 
                     Converter={StaticResource NullConverter}, ConverterParameter=FalseIfNull}" 
                     ToolTip="Create a new recipe based on selected one" />
-            <Button x:Name="Edit" Margin="5 0 0 0" 
+            <Button Command="{Binding ShowRecipeEditorCommand}"
+                    CommandParameter="{Binding ElementName=RecipesTreeView, Path=SelectedItem}"                    
+                    x:Name="Edit" Margin="5 0 0 0" 
                     ToolTip="Edit selected recipe" Content="Edit recipe"
                     IsEnabled="{Binding ElementName=RecipesTreeView, Path=SelectedItem, 
                     Converter={StaticResource NullConverter}, ConverterParameter=FalseIfNull}"/>
-
         </StackPanel>
     </Grid>
 </Window>

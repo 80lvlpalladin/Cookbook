@@ -18,17 +18,17 @@ namespace Cookbook.Client.Models
             BaseAddress = GlobalStrings.APIHostAddress
         };
 
-        public static async Task SendRecipeAsync(string title, string description, string ancestryPath = null)
-        {
-            var content = new RecipeDto()
-            {
-                Title = title,
-                Description = description,
-                ParentAncestryPath = ancestryPath
-            };
+        public static async Task SendNewRecipeAsync(NewRecipeDto recipe)
+        {           
+            var result = await _client.PostAsJsonAsync("api/recipes", recipe);
 
-            var result = await _client.PostAsync("api/recipes", 
-                new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json"));
+            if (!result.IsSuccessStatusCode)
+                throw new Exception(result.ReasonPhrase);
+        }
+
+        public static async Task UpdateRecipeAsync(UpdateRecipeDto recipe)
+        {
+            var result = await _client.PutAsJsonAsync("api/recipes", recipe);
 
             if (!result.IsSuccessStatusCode)
                 throw new Exception(result.ReasonPhrase);

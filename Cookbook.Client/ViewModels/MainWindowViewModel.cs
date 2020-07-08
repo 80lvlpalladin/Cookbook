@@ -1,8 +1,11 @@
 ﻿using Cookbook.Client.Models;
 using Cookbook.Client.Utils;
+using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Cookbook.Client.ViewModels
 {
@@ -13,7 +16,6 @@ namespace Cookbook.Client.ViewModels
     {
         private IEnumerable<RecipeViewModel> recipes;
         private bool isLoading;
-        private RecipeViewModel selectedRecipe;
 
         private async Task LoadRecipesAsync()
         {
@@ -24,9 +26,28 @@ namespace Cookbook.Client.ViewModels
             IsLoading = false;
         }
 
+        private void ShowRecipeCreator(RecipeViewModel recipe = null)
+        {
+            RecipeEditor.EditorShown = true;
+            RecipeEditor.Recipe = recipe;
+        }
+
+        private void ShowRecipeEditor(RecipeViewModel recipe)
+        {
+            ShowRecipeCreator(recipe);
+            RecipeEditor.EditMode = true;
+        }
+
         public RecipeEditorControlViewModel RecipeEditor { get; } = new RecipeEditorControlViewModel();
 
-        public MainWindowViewModel() => LoadRecipesAsync();
+        public MainWindowViewModel()
+        {
+            LoadRecipesAsync();
+            ShowRecipeCreatorCommand = new RelayCommand<RecipeViewModel>(ShowRecipeCreator);
+            ShowRecipeEditorCommand = new RelayCommand<RecipeViewModel>(ShowRecipeEditor);
+
+            RecipeEditor.RootLevelUpdated += (s, e) => LoadRecipesAsync();
+        }
 
         public IEnumerable<RecipeViewModel> Recipes
         {
@@ -40,6 +61,9 @@ namespace Cookbook.Client.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ICommand ShowRecipeCreatorCommand { get; set; }
+        public ICommand ShowRecipeEditorCommand { get; set; }
+
 
         public bool IsLoading
         {
@@ -50,7 +74,6 @@ namespace Cookbook.Client.ViewModels
                 OnPropertyChanged();
             }
         }
-
         
     }
 }

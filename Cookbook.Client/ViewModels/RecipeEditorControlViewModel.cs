@@ -1,4 +1,5 @@
 ﻿using Cookbook.Client.Models;
+using Cookbook.Client.Models.DTOs;
 using Cookbook.Client.Utils;
 using GalaSoft.MvvmLight.Command;
 using System;
@@ -11,21 +12,70 @@ namespace Cookbook.Client.ViewModels
     {
         private string _title;
         private string _description;
-        private string ancestryPath;
         private bool _editorShown;
-
-
-
-
+        private RecipeViewModel _recipe;
 
         private async Task SendRecipeAsync()
         {
-            await APIConsumer.SendRecipeAsync(Title, Description, AncestryPath);
+            Task task;
+
+            if (EditMode)
+            {
+                task = APIConsumer.UpdateRecipeAsync(new UpdateRecipeDto()
+                {
+                    Title = Title,
+                    Description = Description,
+                    RecipeID = Recipe.RecipeID
+                });
+            }
+            else
+            {
+                task = APIConsumer.SendNewRecipeAsync(new NewRecipeDto()
+                {
+                    Title = Title,
+                    Description = Description,
+                    ParentAncestryPath = Recipe?.AncestryPath
+                });
+            }
+
+            await task;
+
+            if (task.IsCompletedSuccessfully && !EditMode)
+            {
+                if (Recipe is null)
+                    RootLevelUpdated?.Invoke(null, null);
+                else
+                    Recipe.LoadChildrenCommand.Execute(null);                    
+            }
+            else if (task.IsCompletedSuccessfully && EditMode)
+            {
+                Recipe.Title = Title;
+                Recipe.Description = Description;
+                EditMode = false;
+            }
+
+            CloseEditorCommand.Execute(null);            
         }
+
+        public event EventHandler RootLevelUpdated; 
 
         public RecipeEditorControlViewModel()
         {
             SendRecipeCommand = new RelayCommand(() => SendRecipeAsync());
+            CloseEditorCommand = new RelayCommand(() => EditorShown = false);
+        }
+
+        public bool EditMode { get; set; }
+
+        public RecipeViewModel Recipe
+        {
+            get => _recipe;
+            set
+            {
+                _recipe = value;
+                Title = _recipe?.Title;
+                Description = _recipe?.Description;
+            }
         }
 
         public bool EditorShown
@@ -33,17 +83,14 @@ namespace Cookbook.Client.ViewModels
             get => _editorShown;
             set
             {
-                _editorShown = value;
-                OnPropertyChanged();
-            }
-        }
+                if(!value)
+                {
+                    Recipe = null;
+                    Title = null;
+                    Description = null;
+                }
 
-        public string AncestryPath
-        {
-            get => ancestryPath;
-            set
-            {
-                ancestryPath = value;
+                _editorShown = value;
                 OnPropertyChanged();
             }
         }
@@ -69,5 +116,7 @@ namespace Cookbook.Client.ViewModels
         }
 
         public ICommand SendRecipeCommand { get; set; }
+        public ICommand CloseEditorCommand { get; set; }
+
     }
 }

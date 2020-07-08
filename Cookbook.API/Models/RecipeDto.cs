@@ -15,7 +15,7 @@ namespace Cookbook.API.Models
         public string AncestryPath { get; set; }
 
         /// <summary>Date recipe was last updated</summary>
-        public DateTime LastUpdated { get; set; }
+        public DateTime Created { get; set; }
 
         /// <summary>Recipe title</summary>
         public string Title { get; set; }

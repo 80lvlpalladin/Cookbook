@@ -13,6 +13,8 @@ namespace Cookbook.Client.ViewModels
     public class RecipeViewModel : PropertyChangedPropagator
     {
         private IEnumerable<RecipeViewModel> children;
+        private string title;
+        private string description;
 
         private async Task LoadChildrenAsync()
         {
@@ -34,13 +36,29 @@ namespace Cookbook.Client.ViewModels
         public string AncestryPath { get; set; }
 
         /// <summary>Date recipe was last updated</summary>
-        public DateTime LastUpdated { get; set; }
+        public DateTime Created { get; set; }
 
         /// <summary>Recipe title</summary>
-        public string Title { get; set; }
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Recipe description</summary>
-        public string Description { get; set; }
+        public string Description
+        {
+            get => description;
+            set
+            {
+                description = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ICommand LoadChildrenCommand { get; set; }
 

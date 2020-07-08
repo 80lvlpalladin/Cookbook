@@ -25,12 +25,26 @@ namespace Cookbook.API.Controllers
                 return new JsonResult(result);
         }
 
-        [HttpPost]
-        public IActionResult AddRecipe(AddRecipeDto recipe)
+        [HttpPut]
+        public IActionResult UpdateRecipe(UpdateRecipeDto recipe)
         {
             using var writer = new CookbookWriter();
-            writer.AddRecipe(recipe.Title, recipe.Description, recipe.ParentAncestryPath);
-            return new OkResult();
+
+            if (writer.UpdateRecipe(recipe.Title, recipe.Title, recipe.RecipeID))
+                return new OkResult();
+            else
+                return new UnprocessableEntityResult();
+        }
+
+        [HttpPost]
+        public IActionResult AddRecipe(NewRecipeDto recipe)
+        {
+            using var writer = new CookbookWriter();
+
+            if (writer.AddRecipe(recipe.Title, recipe.Description, recipe.ParentAncestryPath))
+                return new OkResult();
+            else 
+                return new UnprocessableEntityResult();
         }
     }
 }

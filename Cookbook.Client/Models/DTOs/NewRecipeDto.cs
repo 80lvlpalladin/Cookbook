@@ -1,6 +1,6 @@
 ﻿namespace Cookbook.Client.Models.DTOs
 {
-    public class RecipeDto
+    public class NewRecipeDto
     {
         public string Title {get;set;}
         public string Description {get;set;}

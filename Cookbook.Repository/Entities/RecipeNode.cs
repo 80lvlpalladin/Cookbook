@@ -1,4 +1,6 @@
-﻿namespace Cookbook.Repository.Entities
+﻿using System;
+
+namespace Cookbook.Repository.Entities
 {
     /// <summary>Entity class reflecting recipe position in recipes tree</summary>
     public class RecipeNode
@@ -11,5 +13,7 @@
         /// By default, if no ancestry type is specified, Recipe is placed on the top level of the tree
         /// </summary>
         public string AncestryPath { get; set; }
+
+        public DateTime Created { get; set; }
     }
 }

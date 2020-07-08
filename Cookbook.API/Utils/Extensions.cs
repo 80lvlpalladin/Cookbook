@@ -18,7 +18,7 @@ namespace Cookbook.API.Utils
                 {
                     RecipeID = keyvalue.Key.RecipeID,
                     AncestryPath = keyvalue.Key.AncestryPath,
-                    LastUpdated = keyvalue.Value.LastUpdated,
+                    Created = keyvalue.Key.Created,
                     Title = keyvalue.Value.Title,
                     Description = keyvalue.Value.Description
                 };
