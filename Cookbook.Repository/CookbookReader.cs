@@ -16,6 +16,12 @@ namespace Cookbook.Repository
         ///<inheritdoc/>
         public void Dispose() => _context.Dispose();
 
+        public IEnumerable<RecipeLogEntry> GetLogEntries(int recipeId)
+        {
+            return _context.RecipesHistory.Where(entry => entry.RecipeID == recipeId)?
+                .OrderBy(entry => entry.LastUpdated).ToArray();
+        }
+
         /// <summary>Get current versions of children of recipe with given ID</summary>
         /// <param name="parentId">0 if you want to get all root recipes</param>
         /// <returns>Dictionary of RecipeNode and RecipeLogEntry objects, null if no recipe with such id exists</returns>

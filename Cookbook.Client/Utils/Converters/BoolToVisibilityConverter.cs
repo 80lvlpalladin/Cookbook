@@ -17,6 +17,7 @@ namespace Cookbook.Client.Utils.Converters
             {
                 "CollapsedIfFalse" => input ? Visibility.Visible : Visibility.Collapsed,
                 "HiddenIfFalse" => input ? Visibility.Visible : Visibility.Hidden,
+                "HiddenIfTrue" => input ? Visibility.Hidden : Visibility.Visible,
                 _ => throw new Exception("This converter requires a parameter")
             };
         }

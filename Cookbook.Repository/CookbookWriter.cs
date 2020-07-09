@@ -17,7 +17,7 @@ namespace Cookbook.Repository
 
         private bool AddNewLogEntry(string title, string description, int recipeId, DateTime? created = null)
         {
-            var newVersionId = _context.RecipesHistory.Max(entry => (int?)entry.VersionID) ?? 0 + 1;
+            var newVersionId = (_context.RecipesHistory.DefaultIfEmpty()?.Max(entry => entry.VersionID) ?? 0) + 1;
             _context.RecipesHistory.Add(
                 new RecipeLogEntry()
                 {
@@ -33,12 +33,11 @@ namespace Cookbook.Repository
 
         public bool AddRecipe(string title, string description, string parentAncestryPath = null)
         {
-            var newId = _context.RecipesTree.Max(node => (int?)node.RecipeID) ?? 0 + 1;
+            var newId = (_context.RecipesTree.DefaultIfEmpty()?.Max(node => node.RecipeID) ?? 0) + 1;
             var newPath = parentAncestryPath + newId + '/';
             var created = DateTime.Now;
             _context.RecipesTree.Add(
                 new RecipeNode() { RecipeID = newId, AncestryPath = newPath, Created = created});
-
             return AddNewLogEntry(title, description, newId, created);
         }
 

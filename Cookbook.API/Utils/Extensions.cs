@@ -24,5 +24,18 @@ namespace Cookbook.API.Utils
                 };
             }
         }
+
+        public static IEnumerable<RecipeLogEntryDto> ToLogEntryDto(this IEnumerable<RecipeLogEntry> entries)
+        {
+            foreach(var entry in entries)
+            {
+                yield return new RecipeLogEntryDto()
+                {
+                    LastUpdated = entry.LastUpdated,
+                    Title = entry.Title,
+                    Description = entry.Description
+                };
+            }
+        }
     }
 }

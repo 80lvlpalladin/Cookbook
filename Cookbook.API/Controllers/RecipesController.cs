@@ -16,8 +16,25 @@ namespace Cookbook.API.Controllers
         [HttpGet("{parentId?}")]
         public ActionResult<IEnumerable<RecipeDto>> GetRecipes(int parentId = 0)
         {
+            if (parentId < 0)
+                return new BadRequestResult();
+
             using var reader = new CookbookReader();
             var result = reader.GetRecipes(parentId)?.ToRecipeDto();
+
+            if (result is null)
+                return new NotFoundResult();
+            else
+                return new JsonResult(result);
+        }
+
+        [HttpGet("{recipeId}/history")]
+        public ActionResult<IEnumerable<RecipeLogEntryDto>> GetRecipeHistory(int recipeId)
+        {
+            if (recipeId < 0)
+                return new BadRequestResult();
+            using var reader = new CookbookReader();
+            var result = reader.GetLogEntries(recipeId)?.ToLogEntryDto();
 
             if (result is null)
                 return new NotFoundResult();
@@ -30,7 +47,7 @@ namespace Cookbook.API.Controllers
         {
             using var writer = new CookbookWriter();
 
-            if (writer.UpdateRecipe(recipe.Title, recipe.Title, recipe.RecipeID))
+            if (writer.UpdateRecipe(recipe.Title, recipe.Description, recipe.RecipeID))
                 return new OkResult();
             else
                 return new UnprocessableEntityResult();

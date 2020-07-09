@@ -10,6 +10,7 @@ namespace Cookbook.Client.Utils.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+           
             var isValueNull = Equals(value, null);
             return parameter switch
             {
