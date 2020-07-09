@@ -19,8 +19,8 @@ namespace Cookbook.API.Controllers
             if (parentId < 0)
                 return new BadRequestResult();
 
-            using var reader = new CookbookReader();
-            var result = reader.GetRecipes(parentId)?.ToRecipeDto();
+            using var repo = new RecipesRepository();
+            var result = repo.GetRecipes(parentId)?.ToRecipeDto();
 
             if (result is null)
                 return new NotFoundResult();
@@ -33,8 +33,8 @@ namespace Cookbook.API.Controllers
         {
             if (recipeId < 0)
                 return new BadRequestResult();
-            using var reader = new CookbookReader();
-            var result = reader.GetLogEntries(recipeId)?.ToLogEntryDto();
+            using var repo = new RecipesRepository();
+            var result = repo.GetLogEntries(recipeId)?.ToLogEntryDto();
 
             if (result is null)
                 return new NotFoundResult();
@@ -45,9 +45,9 @@ namespace Cookbook.API.Controllers
         [HttpPut]
         public IActionResult UpdateRecipe(UpdateRecipeDto recipe)
         {
-            using var writer = new CookbookWriter();
+            using var repo = new RecipesRepository();
 
-            if (writer.UpdateRecipe(recipe.Title, recipe.Description, recipe.RecipeID))
+            if (repo.UpdateRecipe(recipe.Title, recipe.Description, recipe.RecipeID))
                 return new OkResult();
             else
                 return new UnprocessableEntityResult();
@@ -56,9 +56,9 @@ namespace Cookbook.API.Controllers
         [HttpPost]
         public IActionResult AddRecipe(NewRecipeDto recipe)
         {
-            using var writer = new CookbookWriter();
+            using var repo = new RecipesRepository();
 
-            if (writer.AddRecipe(recipe.Title, recipe.Description, recipe.ParentAncestryPath))
+            if (repo.AddRecipe(recipe.Title, recipe.Description, recipe.ParentAncestryPath) > 0)
                 return new OkResult();
             else 
                 return new UnprocessableEntityResult();
