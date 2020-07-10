@@ -8,9 +8,7 @@ using System.Windows.Input;
 
 namespace Cookbook.Client.ViewModels
 {
-    /// <summary>
-    /// TODO: summary
-    /// </summary>
+    /// <summary>ViewModel for MainWindow</summary>
     public class MainWindowViewModel : PropertyChangedPropagator
     {
         private IEnumerable<RecipeViewModel> recipes;
@@ -35,6 +33,9 @@ namespace Cookbook.Client.ViewModels
         {
             RecipeEditor.EditorShown = true;
             RecipeEditor.Recipe = recipe;
+
+            if (recipe == null)
+                RecipeEditor.RootLevelTitles = Recipes.Select(recipe => recipe.Title);
         }
 
         private void ShowRecipeEditor(RecipeViewModel recipe)
@@ -43,20 +44,23 @@ namespace Cookbook.Client.ViewModels
             RecipeEditor.EditMode = true;
         }
 
+        /// <summary>RecipeEditor instance</summary>
         public RecipeEditorControlViewModel RecipeEditor { get; } = new RecipeEditorControlViewModel();
+
+        /// <summary>RecipeHistory instance</summary>
         public RecipeHistoryControlViewModel RecipeHistory { get; } = new RecipeHistoryControlViewModel();
       
-
+        /// <summary>Does initial recipe loading, sets up commands and subscribes to events </summary>
         public MainWindowViewModel()
         {
             LoadRecipesAsync();
             ShowRecipeCreatorCommand = new RelayCommand<RecipeViewModel>(ShowRecipeCreator);
             ShowRecipeEditorCommand = new RelayCommand<RecipeViewModel>(ShowRecipeEditor);
             ShowRecipeHistoryCommand = new RelayCommand<int>(id => LoadRecipeHistoryAsync(id));
-
             RecipeEditor.RootLevelUpdated += (s, e) => LoadRecipesAsync();
         }
 
+        /// <summary>Root level recipes collection</summary>
         public IEnumerable<RecipeViewModel> Recipes
         {
             get
@@ -69,9 +73,17 @@ namespace Cookbook.Client.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>Command invoked when Create Recipe or Fork Recipe button is clicked</summary>
         public ICommand ShowRecipeCreatorCommand { get; set; }
+
+        /// <summary>Command invoked when Edit Recipe button is clicked</summary>
         public ICommand ShowRecipeEditorCommand { get; set; }
+
+        /// <summary>Command invoked when Recipe History button is clicked</summary>
         public ICommand ShowRecipeHistoryCommand { get; set; }
+
+        /// <summary>Indicates wether Root level recipes are being loaded </summary>
         public bool IsLoading
         {
             get => isLoading;

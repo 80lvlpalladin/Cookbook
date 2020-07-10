@@ -74,11 +74,10 @@
                     </Style.Triggers>
                 </Style>
             </Border.Resources>
-            <Grid Margin="5" Visibility="{Binding ElementName=RecipesTreeView, Path=SelectedItem, 
-                Converter={StaticResource NullConverter}, ConverterParameter=HiddenIfNull}">
+            <Grid Margin="5">
                 <StackPanel VerticalAlignment="Top">
                     <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=RecipesTreeView, Path=SelectedItem.Description}"/>
-                    <controls:RecipeEditorControl x:Name="RecipeEditorControl" Visibility="{Binding EditorShown,
+                    <controls:RecipeEditorControl x:Name="RecipeEditorControl" Visibility="{Binding EditorShown, 
                         Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=CollapsedIfFalse}"
                         DataContext="{Binding RecipeEditor}"/>
                     <controls:RecipeHistoryControl x:Name="RecipeHistoryControl" DataContext="{Binding RecipeHistory}" Visibility="{Binding HistoryShown,

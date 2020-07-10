@@ -4,11 +4,10 @@ using System.IO;
 
 namespace Cookbook.Client.Utils
 {
-    /// <summary>
-    /// TODO: summary
-    /// </summary>
+    /// <summary>Application-level strings</summary>
     public static class GlobalStrings
     {
+        /// <summary>Parses address set in launchSettings.json</summary>
         public static Uri APIHostAddress
         {
             get
@@ -20,6 +19,7 @@ namespace Cookbook.Client.Utils
             }
         }
 
+        /// <summary>Directory where .exe is located</summary>
         public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
     }
 

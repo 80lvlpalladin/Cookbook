@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Cookbook.Client.Models
 {
+    /// <summary>
+    /// Client-side class for RecipeLogEntry
+    /// </summary>
     public class RecipeLogEntry
     {
         /// <summary>Date recipe was last updated</summary>

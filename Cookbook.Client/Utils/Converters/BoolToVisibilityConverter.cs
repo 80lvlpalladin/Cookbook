@@ -5,9 +5,7 @@ using System.Windows.Data;
 
 namespace Cookbook.Client.Utils.Converters
 {
-    /// <summary>
-    /// TODO: summary
-    /// </summary>
+    /// <summary>Converts bool to Visibility based on parameter</summary>
     public class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -15,7 +15,7 @@ namespace Cookbook.Repository.DbContexts
             _dbFileURI = dbfileUri ??
                 AppDomain.CurrentDomain.BaseDirectory + "Cookbook.db";
 
-            Database.EnsureCreated(); //https://github.com/dotnet/efcore/issues/21215
+            Database.EnsureCreated(); //this exception is always thrown (unresolved issue): https://github.com/dotnet/efcore/issues/21215
         }
 
         /// <summary>Table that reflects recipe tree structure</summary>
@@ -39,10 +39,46 @@ namespace Cookbook.Repository.DbContexts
 
         /// <summary>Database file location</summary>
         private readonly string _dbFileURI;
-
         private void SeedInitialData(ModelBuilder builder)
         {
-            
-        }       
+            if(_dbFileURI.Contains("Cookbook.db"))
+                SeedRootRecipies(builder);
+        }
+        
+        private void SeedRootRecipies(ModelBuilder builder)
+        {
+            var rootRecipies = new[]
+            {
+                "Pasta Carbonara",
+                "Mac & Cheese",
+                "Baked Trout",
+                "British Fries",
+                "Mashed Potatoes",
+                "New York Pizza",
+                "Tortellini",
+                "Classic Taco",
+                "Salmon Pate",
+                "Chicken Kyiv"
+            };
+
+            for (int i = 1; i < 11; i++)
+            {
+                var created = DateTime.Now;
+                builder.Entity<RecipeNode>().HasData(new RecipeNode()
+                {
+                    RecipeID = i,
+                    AncestryPath = i + "/",
+                    Created = created
+                });
+                builder.Entity<RecipeLogEntry>().HasData(new RecipeLogEntry()
+                {
+                    VersionID = i,
+                    RecipeID = i,
+                    LastUpdated = created,
+                    Title = rootRecipies[i - 1],
+                    Description = "Description for " + rootRecipies[i - 1]
+                });
+            }
+        }
     }
 }

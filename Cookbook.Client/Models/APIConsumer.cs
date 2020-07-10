@@ -16,6 +16,7 @@ namespace Cookbook.Client.Models
             BaseAddress = GlobalStrings.APIHostAddress
         };
 
+        /// <summary>Posts new recipe to Cookbook.API</summary>
         public static async Task SendNewRecipeAsync(NewRecipeDto recipe)
         {           
             var result = await _client.PostAsJsonAsync("api/recipes", recipe);
@@ -24,6 +25,7 @@ namespace Cookbook.Client.Models
                 throw new Exception(result.ReasonPhrase);
         }
 
+        /// <summary>Puts updated recipe to Cookbook.API</summary>
         public static async Task UpdateRecipeAsync(UpdateRecipeDto recipe)
         {
             var result = await _client.PutAsJsonAsync("api/recipes", recipe);
@@ -32,6 +34,8 @@ namespace Cookbook.Client.Models
                 throw new Exception(result.ReasonPhrase);
         }
 
+        /// <summary>Gets recipes from Cookbook.API for given parent Id/// </summary>
+        /// <param name="parentId">If 0, returns all root level recipes</param>
         public static async Task<IEnumerable<RecipeViewModel>> GetRecipesAsync(int parentId = 0)
         {
             if (parentId < 0)
@@ -49,6 +53,7 @@ namespace Cookbook.Client.Models
             else throw new Exception(response.ReasonPhrase);
         }
 
+        /// <summary>Gets recipe history for given recipeId from Cookbook.API</summary>
         public static async Task<IEnumerable<RecipeLogEntry>> GetHistoryAsync(int recipeId)
         {
             if (recipeId < 0)
