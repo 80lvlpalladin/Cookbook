@@ -10,14 +10,14 @@ using System.Text;
 
 namespace Cookbook.Repository
 {
-    public class RecipesRepository : IDisposable
+    public class RecipesRepository : IRecipesRepository
     {
         /// <summary>Constructor</summary>
         /// <param name="repoLocation">Location of repository db file. Root folder by default</param>
         public RecipesRepository(string repoLocation = null) =>
             _context = new RecipesContext(repoLocation);
 
-        /// <summary>Get all log entries for the given recipe Id</summary>
+        ///<inheritdoc/>
         public IEnumerable<RecipeLogEntry> GetLogEntries(int recipeId)
         {
             if (recipeId <= 0)
@@ -29,9 +29,7 @@ namespace Cookbook.Repository
                 .OrderBy(entry => entry.LastUpdated).ToArray();
         }
 
-        /// <summary>Get current versions of children of recipe with given ID</summary>
-        /// <param name="parentId">0 if you want to get all root recipes</param>
-        /// <returns>Dictionary of RecipeNode and RecipeLogEntry objects, null if no recipe with such id exists</returns>
+        ///<inheritdoc/>
         public Dictionary<RecipeNode, RecipeLogEntry> GetRecipes(int parentId = 0)
         {
             if (parentId < 0)
@@ -96,9 +94,7 @@ namespace Cookbook.Repository
             return _context.SaveChanges() > 0;
         }
 
-        /// <summary>Adds a new recipe to repository.</summary>
-        /// <param name="parentAncestryPath">If no parent ancestry path is supplied, adds recipe to root level</param>
-        /// <returns>Id of newly created recipe if operation was successful, otherwise - 0</returns>
+        ///<inheritdoc/>
         public int AddRecipe(string title, string description, string parentAncestryPath = null)
         {
             if (parentAncestryPath != null)
@@ -113,8 +109,7 @@ namespace Cookbook.Repository
             else return 0;
         }
 
-        /// <summary>Updates existing recipe</summary>
-        /// <returns>If operation was successful</returns>
+        ///<inheritdoc/>
         public bool UpdateRecipe(string title, string description, int recipeId)
         {
             if (_context.RecipesTree.FirstOrDefault(node => node.RecipeID == recipeId) is null)

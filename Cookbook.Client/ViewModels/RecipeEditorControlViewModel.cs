@@ -3,6 +3,7 @@ using Cookbook.Client.Models.DTOs;
 using Cookbook.Client.Utils;
 using GalaSoft.MvvmLight.Command;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -14,6 +15,7 @@ namespace Cookbook.Client.ViewModels
         private string _description;
         private bool _editorShown;
         private RecipeViewModel _recipe;
+        private bool _submitEnabled;
 
         private async Task SendRecipeAsync()
         {
@@ -45,7 +47,7 @@ namespace Cookbook.Client.ViewModels
                 if (Recipe is null)
                     RootLevelUpdated?.Invoke(null, null);
                 else
-                    Recipe.LoadChildrenCommand.Execute(null);                    
+                    Recipe.LoadChildrenCommand.Execute(null);
             }
             else if (task.IsCompletedSuccessfully && EditMode)
             {
@@ -54,10 +56,18 @@ namespace Cookbook.Client.ViewModels
                 EditMode = false;
             }
 
-            CloseEditorCommand.Execute(null);            
+            CloseEditorCommand.Execute(null);
         }
 
-        public event EventHandler RootLevelUpdated; 
+        private bool ValidateValues()
+        {
+            if (_recipe is null)
+                return false;
+            return EditMode ? !(_recipe.Title == _title && _recipe.Description == _description) : 
+                !_recipe.Children.Any(recipe => recipe.Title == _title);
+        }
+
+        public event EventHandler RootLevelUpdated;
 
         public RecipeEditorControlViewModel()
         {
@@ -83,7 +93,7 @@ namespace Cookbook.Client.ViewModels
             get => _editorShown;
             set
             {
-                if(!value)
+                if (!value)
                 {
                     Recipe = null;
                     Title = null;
@@ -95,12 +105,23 @@ namespace Cookbook.Client.ViewModels
             }
         }
 
+        public bool SubmitEnabled
+        {
+            get => _submitEnabled;
+            set
+            {
+                _submitEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string Title
         {
             get => _title;
             set
             {
                 _title = value;
+                SubmitEnabled = ValidateValues();
                 OnPropertyChanged();
             }
         }
@@ -111,6 +132,7 @@ namespace Cookbook.Client.ViewModels
             set
             {
                 _description = value;
+                SubmitEnabled = ValidateValues();
                 OnPropertyChanged();
             }
         }
